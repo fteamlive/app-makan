@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apa Nak Makan?</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: #FF5E13;
+      font-family: system-ui, -apple-system, sans-serif;
+      overflow: hidden;
+      position: relative;
+      user-select: none;
+      padding: 2rem;
+      box-sizing: border-box;
+    }
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.1;
+      pointer-events: none;
+      background-image: radial-gradient(#000 2px, transparent 2px);
+      background-size: 48px 48px;
+    }
+    .wrapper {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3rem;
+      width: 100%;
+      max-width: 56rem;
+      text-align: center;
+    }
+    h1 {
+      font-size: clamp(3.5rem, 10vw, 6.25rem);
+      font-weight: 900;
+      line-height: 0.85;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: -0.05em;
+      filter: drop-shadow(8px 8px 0px #000);
+      transform: rotate(-1deg);
+      margin: 0;
+    }
+    #result-box {
+      width: 100%;
+      background-color: white;
+      border: 12px solid black;
+      border-radius: 80px;
+      padding: 3rem;
+      min-height: 420px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 20px 20px 0px 0px rgba(0,0,0,0.25);
+      transition: background-color 0.3s, transform 0.2s;
+      box-sizing: border-box;
+    }
+    #result-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: bounce-slow 4s ease-in-out infinite;
+    }
+    #result-content .emoji {
+      font-size: clamp(6rem, 15vw, 12.5rem);
+      line-height: 1;
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+    #result-content .text {
+      font-size: clamp(2rem, 6vw, 5rem);
+      font-weight: 900;
+      color: black;
+      text-transform: uppercase;
+      letter-spacing: -0.05em;
+      line-height: 1;
+      display: block;
+    }
+    #result-content .placeholder-text {
+      font-size: clamp(1.5rem, 4vw, 2.25rem);
+      font-weight: 900;
+      color: black;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      opacity: 0.2;
+      display: block;
+    }
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      align-items: center;
+      width: 100%;
+    }
+    button {
+      border: 6px solid black;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    button span {
+      font-weight: 900;
+      color: black;
+      text-transform: uppercase;
+      letter-spacing: -0.025em;
+      line-height: 1;
+    }
+    .btn-primary {
+      background-color: #00D1FF;
+      padding: 2rem 5rem;
+      box-shadow: 12px 12px 0px 0px #000;
+    }
+    .btn-primary:hover {
+      transform: translateY(4px);
+      box-shadow: 8px 8px 0px 0px #000;
+    }
+    .btn-primary:active {
+      transform: translateY(12px);
+      box-shadow: none;
+    }
+    .btn-primary span {
+      font-size: clamp(1.5rem, 5vw, 3rem);
+    }
+    .btn-secondary {
+      background-color: #FFDE59;
+      padding: 1.25rem 4rem;
+      box-shadow: 8px 8px 0px 0px #000;
+      border-width: 5px;
+      display: none;
+    }
+    .btn-secondary:hover {
+      transform: translateY(4px);
+      box-shadow: 4px 4px 0px 0px #000;
+    }
+    .btn-secondary:active {
+      transform: translateY(8px);
+      box-shadow: none;
+    }
+    .btn-secondary span {
+      font-size: clamp(1.2rem, 3.5vw, 2rem);
+    }
+    @keyframes bounce-slow {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+    .scale-105 {
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <h1>Apa nak<br>makan tonight?</h1>
+    <div id="result-box">
+      <div id="result-content">
+        <span class="emoji">🤤</span>
+        <span class="placeholder-text">Hungry? Tap Below!</span>
+      </div>
+    </div>
+    <div class="button-group">
+      <button onclick="pickDish()" class="btn-primary">
+        <span>Pilih untuk saya!</span>
+      </button>
+      <button id="share-btn" onclick="shareDish()" class="btn-secondary">
+        <span>Share 📋</span>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const dishes = [
+      { name: 'Nasi Lemak', emoji: '🥥' },
+      { name: 'Roti Canai', emoji: '🥐' },
+      { name: 'Laksa', emoji: '🍜' },
+      { name: 'Satay', emoji: '🍢' },
+      { name: 'Mee Goreng', emoji: '🍝' },
+      { name: 'Cendol', emoji: '🍧' },
+      { name: 'Rendang', emoji: '🍛' },
+      { name: 'Teh Tarik', emoji: '☕' },
+      { name: 'Mee Rebus', emoji: '🍲' },
+      { name: 'Nasi Kerabu', emoji: '🥗' }
+    ];
+
+    let currentDish = null;
+
+    function pickDish() {
+      const randomDish = dishes[Math.floor(Math.random() * dishes.length)];
+      currentDish = randomDish;
+      const box = document.getElementById('result-box');
+      const content = document.getElementById('result-content');
+      const shareBtn = document.getElementById('share-btn');
+      
+      const colors = ['#FFDE59', '#00FF94', '#FF7EB3', '#8093FF', '#B2FF59'];
+      box.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      
+      content.innerHTML = `
+        <span class="emoji">${randomDish.emoji}</span>
+        <span class="text">${randomDish.name}</span>
+      `;
+      
+      box.classList.add('scale-105');
+      setTimeout(() => box.classList.remove('scale-105'), 200);
+      
+      shareBtn.style.display = 'block';
+      shareBtn.querySelector('span').innerText = 'Share 📋';
+    }
+
+    function shareDish() {
+      if (!currentDish) return;
+      const textToShare = `I'm eating ${currentDish.name} ${currentDish.emoji} tonight! Apa nak makan?`;
+      navigator.clipboard.writeText(textToShare).then(() => {
+        const shareBtn = document.getElementById('share-btn');
+        shareBtn.querySelector('span').innerText = 'Copied! ✨';
+        setTimeout(() => {
+          shareBtn.querySelector('span').innerText = 'Share 📋';
+        }, 2000);
+      }).catch(err => {
+        console.error('Failed to copy text: ', err);
+      });
+    }
+  </script>
+</body>
+</html>

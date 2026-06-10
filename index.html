@@ -157,11 +157,45 @@
     .scale-105 {
       transform: scale(1.05);
     }
+    .toggle-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+      background: white;
+      border: 5px solid black;
+      padding: 0.75rem 1.75rem;
+      border-radius: 9999px;
+      box-shadow: 6px 6px 0px 0px #000;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .toggle-label:active {
+      transform: translateY(2px);
+      box-shadow: 4px 4px 0px 0px #000;
+    }
+    .toggle-label input {
+      width: 24px;
+      height: 24px;
+      accent-color: #00D1FF;
+      cursor: pointer;
+    }
+    .toggle-label span {
+      font-size: clamp(1rem, 3vw, 1.5rem);
+      font-weight: 900;
+      color: black;
+      text-transform: uppercase;
+      letter-spacing: -0.05em;
+    }
   </style>
 </head>
 <body>
   <div class="wrapper">
     <h1>Apa nak<br>makan tonight?</h1>
+    <label class="toggle-label">
+      <input type="checkbox" id="veg-toggle">
+      <span>Vegetarian Only 🥬</span>
+    </label>
     <div id="result-box">
       <div id="result-content">
         <span class="emoji">🤤</span>
@@ -180,22 +214,24 @@
 
   <script>
     const dishes = [
-      { name: 'Nasi Lemak', emoji: '🥥' },
-      { name: 'Roti Canai', emoji: '🥐' },
-      { name: 'Laksa', emoji: '🍜' },
-      { name: 'Satay', emoji: '🍢' },
-      { name: 'Mee Goreng', emoji: '🍝' },
-      { name: 'Cendol', emoji: '🍧' },
-      { name: 'Rendang', emoji: '🍛' },
-      { name: 'Teh Tarik', emoji: '☕' },
-      { name: 'Mee Rebus', emoji: '🍲' },
-      { name: 'Nasi Kerabu', emoji: '🥗' }
+      { name: 'Nasi Lemak', emoji: '🥥', veg: false },
+      { name: 'Roti Canai', emoji: '🥐', veg: true },
+      { name: 'Laksa', emoji: '🍜', veg: false },
+      { name: 'Satay', emoji: '🍢', veg: false },
+      { name: 'Mee Goreng', emoji: '🍝', veg: true },
+      { name: 'Cendol', emoji: '🍧', veg: true },
+      { name: 'Rendang', emoji: '🍛', veg: false },
+      { name: 'Teh Tarik', emoji: '☕', veg: true },
+      { name: 'Mee Rebus', emoji: '🍲', veg: false },
+      { name: 'Nasi Kerabu', emoji: '🥗', veg: false }
     ];
 
     let currentDish = null;
 
     function pickDish() {
-      const randomDish = dishes[Math.floor(Math.random() * dishes.length)];
+      const isVegOnly = document.getElementById('veg-toggle').checked;
+      const availableDishes = isVegOnly ? dishes.filter(d => d.veg) : dishes;
+      const randomDish = availableDishes[Math.floor(Math.random() * availableDishes.length)];
       currentDish = randomDish;
       const box = document.getElementById('result-box');
       const content = document.getElementById('result-content');
